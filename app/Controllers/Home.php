@@ -15,9 +15,15 @@ class Home extends BaseController
             'realms' => null,
         ];
 
-        return view('layout/Header') .
-            view('home/Home', $data) .
-            view('layout/Footer');
+        $this->template->setTitle('BlizzCMS');
+        $this->template->setSeoMetas([
+            'description'   => 'BlizzCMS is a content management system for World of Warcraft private servers.',
+            'robots'        => 'index, follow',
+            'url'           => current_url(),
+            'type'          => 'website',
+        ]);
+
+        return $this->template->build('home', $data);
     }
 
     /**
