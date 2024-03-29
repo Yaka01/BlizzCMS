@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Libraries\Multilanguage;
+use App\Libraries\Template;
+
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -52,6 +54,13 @@ abstract class BaseController extends Controller
     protected $multilanguage;
 
     /**
+     * Template library
+     * 
+     * @var Template
+     */
+    protected $template;
+
+    /**
      * The current language
      * 
      * @var string
@@ -64,6 +73,7 @@ abstract class BaseController extends Controller
      * @var array
      */
     protected $viewData = [];
+
     /**
      * @return void
      */
@@ -72,9 +82,19 @@ abstract class BaseController extends Controller
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
 
-        // Preload any models, libraries, etc, here.
+        $configOfTemplate = config(\Config\Template::class);
 
         $this->multilanguage = new Multilanguage();
+        $this->template = new Template([
+            'parserEnabled' => $configOfTemplate->parserEnabled,
+            'parserBodyEnabled' => $configOfTemplate->parserBodyEnabled,
+            'titleSeparator' => $configOfTemplate->titleSeparator,
+            'layout' => $configOfTemplate->layout,
+            'theme' => $configOfTemplate->theme,
+            'themeLocations' => $configOfTemplate->themeLocations
+        ]);
+        $this->template->set('multilanguage', $this->multilanguage);
+
         $language = \Config\Services::language();
 
         $this->currentLanguage = $this->multilanguage->currentLanguage('locale');
