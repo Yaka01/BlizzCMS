@@ -92,3 +92,19 @@ define('EVENT_PRIORITY_NORMAL', 100);
  * @deprecated Use \CodeIgniter\Events\Events::PRIORITY_HIGH instead.
  */
 define('EVENT_PRIORITY_HIGH', 10);
+
+/*
+|--------------------------------------------------------------------------
+| CMS Constants
+|--------------------------------------------------------------------------
+|
+| These constants are used when working with the base functions of the CMS
+|
+*/
+defined('ITEM_LINK')     || define('ITEM_LINK', 'link');
+defined('ITEM_DROPDOWN') || define('ITEM_DROPDOWN', 'dropdown');
+defined('SLIDE_IMAGE')   || define('SLIDE_IMAGE', 'image');
+defined('SLIDE_VIDEO')   || define('SLIDE_VIDEO', 'video');
+defined('SLIDE_IFRAME')  || define('SLIDE_IFRAME', 'iframe');
+defined('TARGET_SELF')   || define('TARGET_SELF', '_self');
+defined('TARGET_BLANK')  || define('TARGET_BLANK', '_blank');
