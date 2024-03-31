@@ -1,13 +1,29 @@
 <section class="uk-section uk-padding-remove bc-slider-section">
     <div class="uk-position-relative uk-visible-toggle" uk-slideshow="animation: fade; autoplay: true; autoplay-interval: 10000; pause-on-hover: true; min-height: 125; max-height: 250">
         <ul class="uk-slideshow-items">
-            <li>
-                <img src="assets/images/placeholder.jpg" alt="Título del Slide" uk-cover>
-                <div class="uk-container uk-position-relative uk-margin-large-top">
-                    <h2 class="uk-h2 uk-position-medium uk-text-left uk-margin-remove">Título del Slide</h2>
-                    <p class="uk-position-medium uk-text-left uk-margin-remove">Descripción del Slide</p>
-                </div>
-            </li>
+            <?php foreach (model('Slide')->findAll() as $slide) : ?>
+                <?php if ($slide->type === SLIDE_IMAGE) : ?>
+                    <li>
+                        <img src="<?= $template['uploads'] . $slide->path ?>" alt="<?= $slide->title ?>" uk-cover>
+                        <div class="uk-container uk-position-relative uk-margin-large-top">
+                            <h2 class="uk-h2 uk-position-medium uk-text-left uk-margin-remove"><?= $slide->title ?></h2>
+                            <p class="uk-position-medium uk-text-left uk-margin-remove"><?= $slide->description ?></p>
+                        </div>
+                    </li>
+                <?php elseif ($slide->type === SLIDE_VIDEO) : ?>
+                    <li>
+                        <video src="<?= $template['uploads'] . $slide->path ?>" autoplay loop playslinline uk-cover></video>
+                        <div class="uk-container uk-position-relative uk-margin-large-top">
+                            <h2 class="uk-h2 uk-position-medium uk-text-left uk-margin-remove"><?= $slide->title ?></h2>
+                            <p class="uk-position-medium uk-text-left uk-margin-remove"><?= $slide->description ?></p>
+                        </div>
+                    </li>
+                <?php elseif ($slide->type === SLIDE_IFRAME) : ?>
+                    <li>
+                        <iframe src="<?= $slide->path ?>" allowfullscreen uk-video="autoplay: false" uk-cover></iframe>
+                    </li>
+                <?php endif ?>
+            <?php endforeach ?>
         </ul>
         <div class="uk-position-bottom-center uk-position-small">
             <ul class="uk-slideshow-nav uk-dotnav"></ul>
