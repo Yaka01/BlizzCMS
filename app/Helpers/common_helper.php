@@ -5,7 +5,7 @@ use CodeIgniter\CodeIgniter;
 /**
  * Returns 
  */
-function config_item(string $item)
+function configItem(string $item)
 {
     $db = \Config\Database::connect();
     if (!$db->tableExists('settings')) {
