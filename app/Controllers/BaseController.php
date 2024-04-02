@@ -82,9 +82,25 @@ abstract class BaseController extends Controller
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
 
+        $this->loadCustomHelpers();
+        $this->loadMultilanguage();
+        $this->loadTemplate();
+
+        $language = \Config\Services::language();
+        $language->setLocale($this->currentLanguage);
+    }
+
+    private function loadMultilanguage()
+    {
+        $this->multilanguage = new Multilanguage();
+
+        $this->currentLanguage = $this->multilanguage->currentLanguage('locale');
+    }
+
+    private function loadTemplate()
+    {
         $configOfTemplate = config(\Config\Template::class);
 
-        $this->multilanguage = new Multilanguage();
         $this->template = new Template([
             'parserEnabled' => $configOfTemplate->parserEnabled,
             'parserBodyEnabled' => $configOfTemplate->parserBodyEnabled,
@@ -94,12 +110,10 @@ abstract class BaseController extends Controller
             'themeLocations' => $configOfTemplate->themeLocations
         ]);
         $this->template->set('multilanguage', $this->multilanguage);
+    }
 
-        $language = \Config\Services::language();
-
-        $this->currentLanguage = $this->multilanguage->currentLanguage('locale');
-        $language->setLocale($this->currentLanguage);
-
+    private function loadCustomHelpers()
+    {
         helper('common');
     }
 }
