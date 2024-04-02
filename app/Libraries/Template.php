@@ -180,13 +180,6 @@ class Template
     private $_response;
 
     /**
-     * Site name for SEO.
-     * 
-     * @var string
-     */
-    private $_siteName = '';
-
-    /**
      * Flag indicating if exist seo metas.
      * 
      * @var bool
@@ -203,6 +196,8 @@ class Template
 
     public function __construct(array $config = [])
     {
+        helper('common');
+
         $this->_response = \Config\Services::response();
         if (!empty($config)) {
             $this->initialize($config);
@@ -231,16 +226,7 @@ class Template
             $this->_themeLocations = [APPPATH . 'Themes/'];
         }
 
-        $db = Database::connect();
-
-        if ($db->tableExists('settings')) {
-            $settings_model = new Setting();
-
-            $this->_theme = $settings_model->find('app_theme')->value;
-            $this->_siteName = $settings_model->find('app_name')->value;
-            $this->_seoMetas = $settings_model->find('seo_tags')->value;
-            $this->_seoOgMetas = $settings_model->find('seo_og_tags')->value;
-        }
+        $this->_theme = configItem('app_theme') ?? '';
 
         if ($this->_theme) {
             $this->setTheme($this->_theme);
@@ -826,9 +812,9 @@ class Template
      */
     public function setSeoMetas($metas)
     {
-        $sitename = $this->_siteName;
+        $sitename = configItem('app_name');
 
-        if ($this->_seoMetas) {
+        if (configItem('seo_tags')) {
             if (array_key_exists('description', $metas)) {
                 $this->addMetadata('description', $metas['description']);
             }
@@ -838,7 +824,7 @@ class Template
             }
         }
 
-        if ($this->_seoOgMetas) {
+        if (config('seo_og_tags')) {
             $this->addMetadata('og:site_name', $sitename, 'property');
             $this->addMetadata('og:title', array_key_exists('title', $metas) && $metas['title'] !== $sitename ? $metas['title'] . $this->_titleSeparator . $sitename : $sitename, 'property');
 

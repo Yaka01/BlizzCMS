@@ -99,5 +99,7 @@ abstract class BaseController extends Controller
 
         $this->currentLanguage = $this->multilanguage->currentLanguage('locale');
         $language->setLocale($this->currentLanguage);
+
+        helper('common');
     }
 }

@@ -15,9 +15,9 @@ class Home extends BaseController
             'realms' => null,
         ];
 
-        $this->template->setTitle('BlizzCMS');
+        $this->template->setTitle(configItem('app_name'));
         $this->template->setSeoMetas([
-            'description'   => 'BlizzCMS is a content management system for World of Warcraft private servers.',
+            'description'   => configItem('seo_description_tag'),
             'robots'        => 'index, follow',
             'url'           => current_url(),
             'type'          => 'website',

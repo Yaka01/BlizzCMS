@@ -23,7 +23,7 @@
             <div uk-navbar>
                 <div class="uk-navbar-left">
                     <a href="<?= site_url() ?>" class="uk-navbar-item uk-logo">
-                        <?= $template['site_name'] ?>
+                        <?= configItem('app_name') ?>
                     </a>
                 </div>
                 <div class="uk-navbar-right">
@@ -103,28 +103,26 @@
         <div class="uk-container">
             <div class="uk-grid-small uk-flex uk-flex-middle" uk-grid>
                 <div class="uk-width-expand@s">
-                    <p class="uk-text-small uk-text-center uk-text-left@s uk-margin-remove"><i class="fa-regular fa-copyright"></i> <?= date('Y') ?> <span class="uk-text-bold">appName</span> - <?= lang('rights_reserved') ?></p>
-                    <p class="uk-text-small uk-text-center uk-text-left@s uk-margin-remove"><i class="fa-solid fa-bolt fa-shake"></i> <?= lang('powered_by') ?> <a target="_blank" class="uk-text-bold" href="https://wow-cms.com">BlizzCMS</a></p>
+                    <p class="uk-text-small uk-text-center uk-text-left@s uk-margin-remove"><i class="fa-regular fa-copyright"></i> <?= date('Y') ?> <span class="uk-text-bold"><?= configItem('app_name') ?></span> - <?= lang('General.rights_reserved') ?></p>
+                    <p class="uk-text-small uk-text-center uk-text-left@s uk-margin-remove"><i class="fa-solid fa-bolt fa-shake"></i> <?= lang('General.powered_by') ?> <a target="_blank" class="uk-text-bold" href="https://wow-cms.com">BlizzCMS</a></p>
                 </div>
                 <div class="uk-width-auto@s">
                     <div class="uk-flex uk-flex-center uk-margin">
-                        <?php /*
-                        <?php if (!empty(config_item('social_facebook'))) : ?>
-                            <a target="_blank" href="https://facebook.com/groups/<?= config_item('social_facebook') ?>" class="uk-icon-button"><i class="fa-brands fa-facebook-f"></i></a>
+                        <?php if (!empty(configItem('social_facebook'))) : ?>
+                            <a target="_blank" href="https://facebook.com/groups/<?= configItem('social_facebook') ?>" class="uk-icon-button"><i class="fa-brands fa-facebook-f"></i></a>
                         <?php endif ?>
-                        <?php if (!empty(config_item('social_twitch'))) : ?>
-                            <a target="_blank" href="https://twitch.tv/<?= config_item('social_twitch') ?>" class="uk-icon-button uk-margin-small-left"><i class="fa-brands fa-twitch"></i></a>
+                        <?php if (!empty(configItem('social_twitch'))) : ?>
+                            <a target="_blank" href="https://twitch.tv/<?= configItem('social_twitch') ?>" class="uk-icon-button uk-margin-small-left"><i class="fa-brands fa-twitch"></i></a>
                         <?php endif ?>
-                        <?php if (!empty(config_item('social_reddit'))) : ?>
-                            <a target="_blank" href="https://reddit.com/r/<?= config_item('social_reddit') ?>" class="uk-icon-button uk-margin-small-left"><i class="fa-brands fa-reddit-alien"></i></a>
+                        <?php if (!empty(configItem('social_reddit'))) : ?>
+                            <a target="_blank" href="https://reddit.com/r/<?= configItem('social_reddit') ?>" class="uk-icon-button uk-margin-small-left"><i class="fa-brands fa-reddit-alien"></i></a>
                         <?php endif ?>
-                        <?php if (!empty(config_item('social_x'))) : ?>
-                            <a target="_blank" href="https://x.com/@<?= config_item('social_x') ?>" class="uk-icon-button uk-margin-small-left"><i class="fa-brands fa-x-twitter"></i></a>
+                        <?php if (!empty(configItem('social_x'))) : ?>
+                            <a target="_blank" href="https://x.com/@<?= configItem('social_x') ?>" class="uk-icon-button uk-margin-small-left"><i class="fa-brands fa-x-twitter"></i></a>
                         <?php endif ?>
-                        <?php if (!empty(config_item('social_youtube'))) : ?>
-                            <a target="_blank" href="https://youtube.com/@<?= config_item('social_youtube') ?>" class="uk-icon-button uk-margin-small-left"><i class="fa-brands fa-youtube"></i></a>
+                        <?php if (!empty(configItem('social_youtube'))) : ?>
+                            <a target="_blank" href="https://youtube.com/@<?= configItem('social_youtube') ?>" class="uk-icon-button uk-margin-small-left"><i class="fa-brands fa-youtube"></i></a>
                         <?php endif ?>
-                        */ ?>
                     </div>
                 </div>
             </div>
