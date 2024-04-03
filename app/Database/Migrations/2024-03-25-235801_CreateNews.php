@@ -3,7 +3,6 @@
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
-use App\Models\News;
 
 
 class CreateNews extends Migration
@@ -14,6 +13,7 @@ class CreateNews extends Migration
      */
     public function up()
     {
+        $model = new \App\Models\News();
         $this->forge->addField([
             'id' => [
                 'type' => 'BIGINT',
@@ -23,63 +23,74 @@ class CreateNews extends Migration
             ],
             'title' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
-                'unique' => true,
+                'constraint' => 255
+            ],
+            'summary' => [
+                'type' => 'TEXT'
+            ],
+            'content' => [
+                'type' => 'MEDIUMTEXT',
             ],
             'slug' => [
                 'type' => 'VARCHAR',
-                'constraint' => 50,
-            ],
-            'content' => [
-                'type' => 'LONGTEXT',
-            ],
-            'author_id' => [
-                'type' => 'BIGINT',
-                'constraint' => '20'
-            ],
-            'category_id' => [
-                'type' => 'BIGINT',
-                'constraint' => '20'
-            ],
-            'image_url' => [
-                'type' => 'VARCHAR',
                 'constraint' => 255
             ],
-            'tags' => [
+            'image' => [
+                'type' => 'TEXT'
+            ],
+            'comments' => [
+                'type' => 'BIGINT',
+                'constraint' => 20,
+                'unsigned' => true,
+                'default' => 0
+            ],
+            'views' => [
+                'type' => 'BIGINT',
+                'constraint' => 20,
+                'unsigned' => true,
+                'default' => 0
+            ],
+            'meta_description' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255
+                'constraint' => 255,
+                'default' => ''
+            ],
+            'meta_robots' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'default' => 'index, follow'
+            ],
+            'discuss' => [
+                'type' => 'TINYINT',
+                'constraint' => 1,
+                'unsigned' => true,
+                'default' => 0
             ],
             'created_at' => [
                 'type' => 'DATETIME',
-                'null' => true,
+                'null' => true
             ],
             'updated_at' => [
                 'type' => 'DATETIME',
-                'null' => true,
+                'null' => true
             ],
-            'published_at' => [
+            'deleted_at' => [
                 'type' => 'DATETIME',
-                'null' => true,
-            ],
-            'view' => [
-                'type' => 'INT',
-                'constraint' => 25
-            ],
-            'status' => [
-                'type'       => 'ENUM',
-                'constraint' => ['publish', 'pending', 'draft'],
-                'default'    => 'pending',
-            ],
-            'comments_enabled' => [
-                'type'       => 'ENUM',
-                'constraint' => ['enabled', 'disabled'],
-                'default'    => 'disabled',
+                'null' => true
             ]
         ]);
 
         $this->forge->addKey('id', true);
         $this->forge->createTable('news', false, ['ENGINE' => 'InnoDB']);
 
+        $model->insert([
+            'title' => 'Hello world!',
+            'summary' => 'Welcome to your new website with BlizzCMS. To edit or delete this first news article sign in with your account and go to the admin panel.',
+            'content' => '<p>Welcome to your new website with <strong>BlizzCMS</strong>. To edit or delete this first news article sign in with your account and go to the admin panel. Don\'t forget that if you have any problems you can open an <a href="https://github.com/WoW-CMS/BlizzCMS/issues">issue</a> in our repository or contact us in our <a href="https://discord.wow-cms.com">discord</a>.</p>', 'slug' => 'hello-world',
+            'image' => '2024/03/410943a905e887277d0d803bdee2e2f5.jpg',
+            'meta_robots' => 'index, follow',
+            'discuss' => 1
+        ]);
     }
 
     /**

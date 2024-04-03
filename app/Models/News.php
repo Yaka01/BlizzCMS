@@ -11,24 +11,24 @@ class News extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = Article::class;
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields = [
         'id',
         'title',
-        'slug',
+        'summary',
         'content',
-        'author_id',
-        'category_id',
-        'tags',
-        'image_url',
-        'status',
-        'comments_enabled',
-        'view'
+        'slug',
+        'image',
+        'comments',
+        'views',
+        'meta_description',
+        'meta_robots',
+        'discuss'
     ];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';

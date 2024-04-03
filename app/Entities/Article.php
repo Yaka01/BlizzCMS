@@ -9,17 +9,21 @@ class Article extends Entity
     protected $attributes = [
         'id' => null,
         'title' => null,
-        'slug' => null,
+        'summary' => null,
         'content' => null,
-        'author_id' => null,
-        'category_id' => null,
-        'tags' => null,
-        'image_url' => null,
-        'status' => null,
-        'comments_enabled' => 'enabled',
-        'view' => 0,
+        'slug' => null,
+        'image' => null,
+        'comments' => null,
+        'views' => null,
+        'meta_description' => null,
+        'meta_robots' => null,
+        'discuss' => null
     ];
 
     protected $dates   = ['created_at', 'updated_at', 'published_at'];
-    protected $casts   = [];
+    protected $casts   = [
+        'createdAt' => 'created_at',
+        'updatedAt' => 'updated_at',
+        'deletedAt' => 'deleted_at',
+    ];
 }
