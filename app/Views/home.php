@@ -35,31 +35,31 @@
     <div class="uk-container">
         <div class="uk-margin" uk-grid>
             <div class="uk-width-3-5@s uk-width-2-3@m">
-                <h3 class="uk-h4 uk-text-bold uk-margin-small">Últimas Noticias</h3>
+                <h3 class="uk-h4 uk-text-bold uk-margin-small"><?= lang("General.latest_news") ?></h3>
                 <div class="uk-grid-medium uk-child-width-1-1" uk-grid>
                     <?php if (!empty($articles) && is_array($articles)) : ?>
-                        <?php foreach ($articles as $article_item) : ?>
+                        <?php foreach ($articles as $article) : ?>
                             <div>
                                 <div class="uk-card uk-card-default uk-card-hover uk-grid-collapse" uk-grid>
                                     <div class="uk-width-1-3@s uk-card-media-left uk-cover-container">
-                                        <img src="<?= esc($article_item->image_url) ?>" alt="Título de la Noticia" uk-cover>
+                                        <img src="<?= $template['uploads'] . $article->image ?>" alt="<?= $article->title ?>" uk-cover>
                                         <canvas width="500" height="250"></canvas>
                                     </div>
                                     <div class="uk-width-2-3@s">
                                         <div class="uk-card-body">
                                             <h4 class="uk-h4 uk-text-bold uk-margin-remove">
-                                                <a class="uk-link-reset" href="#"><?= esc($article_item->title) ?></a>
+                                                <a class="uk-link-reset" href="<?= site_url('news/' . $article->id . '/' . $article->slug) ?>"><?= word_limiter($article->title, 12) ?></a>
                                             </h4>
                                             <p class="uk-text-meta uk-margin-remove-top uk-margin-small-bottom">
-                                                <i class="fa-solid fa-calendar-day"></i> <time datetime="2024-03-26"><?= esc($article_item->published_at) ?></time>
+                                                <i class="fa-solid fa-calendar-day"></i> <time datetime="<?= $article->created_at ?>"><?= localeDate($article->created_at) ?></time>
                                             </p>
-                                            <p class="uk-text-small uk-margin-small"><?= esc(strlen($article_item->content) > 100 ? substr($article_item->content, 0, 300) . '...' : $article_item->content) ?></p>
+                                            <p class="uk-text-small uk-margin-small"><?= esc($article->summary) ?></p>
                                             <div class="uk-grid-small uk-flex uk-flex-middle uk-margin-top" uk-grid>
                                                 <div class="uk-width-expand uk-text-meta">
-                                                    <span class="uk-margin-small-right" uk-tooltip="Comentarios"><i class="fa-solid fa-comment"></i> <?= esc($article_item->view_count) ?></span> <span uk-tooltip="Vistas"><i class="fa-solid fa-eye"></i> <?= esc($article_item->view_count) ?></span>
+                                                    <span class="uk-margin-small-right" uk-tooltip="<?= lang('comments') ?>"><i class="fa-solid fa-comment"></i> <?= $article->comments ?></span> <span uk-tooltip="<?= lang('views') ?>"><i class="fa-solid fa-eye"></i> <?= $article->views ?></span>
                                                 </div>
                                                 <div class="uk-width-auto">
-                                                    <a href="#" class="uk-button uk-button-default uk-button-small">Leer Más</a>
+                                                    <a href="<?= site_url('news/' . $article->id . '/' . $article->slug) ?>" class="uk-button uk-button-default uk-button-small"><?= lang('read_more') ?></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -73,7 +73,7 @@
             <div class="uk-width-2-5@s uk-width-1-3@m">
                 <div class="uk-card uk-card-default">
                     <div class="uk-card-header">
-                        <h5 class="uk-h5 uk-text-bold uk-margin-remove">Estado del Reino</h5>
+                        <h5 class="uk-h5 uk-text-bold uk-margin-remove"><?= lang("General.realm_status") ?></h5>
                     </div>
                     <div class="uk-card-body">
                         <div class="uk-grid-small" uk-grid>

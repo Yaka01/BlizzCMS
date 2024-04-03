@@ -1,6 +1,7 @@
 <?php
 
 use App\Controllers\Home;
+use App\Controllers\News;
 use CodeIgniter\Router\RouteCollection;
 
 /**
@@ -8,3 +9,8 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', [Home::class, 'index']);
 $routes->get('lang/(:any)', [Home::class, 'lang']);
+
+/**
+ * News Routes
+ */
+$routes->get('news', [News::class, 'index']);
