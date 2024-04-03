@@ -20,10 +20,13 @@ class Article extends Entity
         'discuss' => null
     ];
 
-    protected $dates   = ['created_at', 'updated_at', 'published_at'];
-    protected $casts   = [
+    protected $datamap = [
         'createdAt' => 'created_at',
         'updatedAt' => 'updated_at',
         'deletedAt' => 'deleted_at',
+        'metaDescription' => 'meta_description',
+        'metaRobots' => 'meta_robots',
     ];
+    protected $dates   = ['created_at', 'updated_at', 'published_at'];
+    protected $casts   = [];
 }

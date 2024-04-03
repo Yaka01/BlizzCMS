@@ -33,4 +33,19 @@ class News extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
+
+    /**
+     * Get the latest rows
+     * 
+     * @return array
+     */
+    public function latest()
+    {
+        $limit = configItem('article_max_recently') ?? 5;
+
+        return $this->builder($this->table)
+            ->orderBy('created_at', 'DESC')
+            ->get($limit)
+            ->getResult(Article::class);
+    }
 }

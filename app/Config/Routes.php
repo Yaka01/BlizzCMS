@@ -14,3 +14,4 @@ $routes->get('lang/(:any)', [Home::class, 'lang']);
  * News Routes
  */
 $routes->get('news', [News::class, 'index']);
+$routes->get('news/(:num)/(:any)', [News::class, 'view']);
