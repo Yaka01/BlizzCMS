@@ -46,7 +46,25 @@
                     <?= $pagination ?>
                 <?php endif ?>
             </div>
-            <div class="uk-width-1-3@s uk-width-1-4@m"></div>
+            <div class="uk-width-1-3@s uk-width-1-4@m">
+                <div class="uk-card uk-card-default">
+                    <div class="uk-card-header">
+                        <h3 class="uk-card-title"><i class="fa-solid fa-rectangle-list"></i> <?= lang('General.latest_news') ?></h3>
+                    </div>
+                    <div class="uk-card-body">
+                        <?php if (isset($aside) && !empty($aside)) : ?>
+                            <ul class="uk-list uk-list-divider uk-text-small">
+                                <?php foreach ($aside as $item) : ?>
+                                    <li>
+                                        <a href="<?= site_url('news/' . $item->id . '/' . $item->slug) ?>"><?= word_limiter($item->title, 10) ?></a>
+                                        <p class="uk-text-meta uk-margin-remove"><i class="fa-solid fa-calendar-day"></i> <time datetime="<?= $item->createdAt ?>"><?= localeDate($item->createdAt) ?></time></p>
+                                    </li>
+                                <?php endforeach ?>
+                            </ul>
+                        <?php endif ?>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
