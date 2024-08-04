@@ -39,55 +39,65 @@ class Server_auth_model extends CI_Model
      */
     public function create_account($username, $email, $password)
     {
-        $emulator = config_item('app_emulator');
-        $database = $this->connect();
+        $database = $this->connect(); // Conectar a la base de datos
 
+        // Obtener la configuración de columnas para la tabla de cuentas
+        $columns = $this->bs_emulator->get_columns('account');
+
+        // Obtener la función de hash desde el emulador
+        $hash_function = $this->bs_emulator->get_function('password_hash');
+
+        // Generar el hash de la contraseña
+        $salt = random_bytes(32);
+        $hashed_password = $hash_function($username, $password, $salt);
+
+        // Inicializar los datos de la cuenta
         $account = [
-            'username'  => $username,
-            'email'     => $email,
-            'expansion' => config_item('app_expansion')
+            $columns['username']  => $username,
+            $columns['email']     => $email,
+            $columns['expansion'] => config_item('app_expansion'),
+            $columns['salt']      => $salt, // Usar el valor de salt generado por la función de hash
+            $columns['verifier']  => $hashed_password, // Usar el hash generado por la función
+            $columns['joindate']  => date('Y-m-d H:i:s'), // Fecha actual
+            $columns['last_ip']   => '', // Asignar valores predeterminados si es necesario
+            $columns['last_login']=> date('Y-m-d H:i:s') // Fecha actual
         ];
 
-        switch ($emulator) {
-            case 'azeroth':
-            case 'trinity':
-                $salt = random_bytes(32);
-                $account['salt'] = $salt;
-                $account['verifier'] = client_pwd_hash($username, $password, 'srp6', $salt);
-                break;
-
-            case 'cmangos':
-                $salt = bin2hex(random_bytes(32));
-                $account['v'] = client_pwd_hash($username, $password, 'hex', $salt);
-                $account['s'] = $salt;
-                break;
-
-            case 'mangos':
-            case 'trinity_sha':
-                $account['sha_pass_hash'] = client_pwd_hash($username, $password);
-                break;
-        }
-
+        // Utilizar Query Builder para insertar los datos de la cuenta
         $database->insert('account', $account);
 
-        $id = $this->account_id($username);
+        // Obtener el ID de la cuenta recién creada
+        $id = $database->insert_id();
 
-        // Create an BNET account if BNET is enabled and the table exists
+        // Crear una cuenta BNET si está habilitado y la tabla existe
         if (config_item('app_emulator_bnet') && $database->table_exists('battlenet_accounts')) {
-            $database->insert('battlenet_accounts', [
-                'id'            => $id,
-                'email'         => $email,
-                'sha_pass_hash' => client_pwd_hash($email, $password, 'bnet')
-            ]);
+            // Obtener la configuración de columnas para la tabla BNET
+            $bnet_columns = $this->bs_emulator->get_columns('battlenet_accounts');
+            
+            // Preparar los datos de la cuenta BNET
+            $bnet_account = [
+                $bnet_columns['id']            => $id,
+                $bnet_columns['email']         => $email,            
+                $bnet_columns['salt']      => $salt,
+                $bnet_columns['verifier']  => $hashed_password,
+            ];
+            
+            // Utilizar Query Builder para insertar los datos de la cuenta BNET
+            $database->insert('battlenet_accounts', $bnet_account);
 
-            $database->update('account', [
+            // Actualizar la cuenta principal con el ID de BNET
+            $update_columns = [
                 'battlenet_account' => $id,
                 'battlenet_index'   => 1
-            ], ['id' => $id]);
+            ];
+            
+            // Utilizar Query Builder para actualizar los datos de la cuenta
+            $database->update('account', $update_columns, [$columns['id'] => $id]);
         }
 
         return $id;
     }
+
 
     /**
      * Get account
