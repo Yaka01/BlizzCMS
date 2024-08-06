@@ -328,23 +328,88 @@ if (! function_exists('client_pwd_hash'))
                 return strtoupper($client->generateVerifier($password));
 
             case 'srp6':
-                // Constants
-                $g = gmp_init(7);
-                $N = gmp_init('894B645E89E1535BBDAD5B8B290650530801B18EBFBF5E8FAB3C82872A3E9BB7', 16);
-                // Calculate first hash
-                $h1 = sha1(strtoupper($username . ':' . $password), true);
-                // Calculate second hash
-                $h2 = sha1($salt . $h1, true);
-                // Convert to integer (little-endian)
-                $h2 = gmp_import($h2, 1, GMP_LSW_FIRST);
-                // g^h2 mod N
-                $verifier = gmp_powm($g, $h2, $N);
-                // Convert back to a byte array (little-endian)
-                $verifier = gmp_export($verifier, 1, GMP_LSW_FIRST);
-                // Pad to 32 bytes, remember that zeros go on the end in little-endian!
-                $verifier = str_pad($verifier, 32, chr(0), STR_PAD_RIGHT);
-                return $verifier;
+                // Initialize the base value for the public key
+                $baseValue = gmp_init(7);
 
+                // Initialize the modulus value using a hexadecimal string
+                $modulus = gmp_init('894B645E89E1535BBDAD5B8B290650530801B18EBFBF5E8FAB3C82872A3E9BB7', 16);
+
+                // Create a hash from the salt and the password
+                // - Concatenate the username and password with a colon
+                // - Convert the concatenated string to uppercase and hash it using SHA-1
+                // - Concatenate the salt with the SHA-1 hash and hash again using SHA-1
+                // - Import the result as a GMP number (integer)
+                $passwordHash = sha1($salt . sha1(strtoupper($username . ':' . $password), true), true);
+                $hashedPassword = gmp_import($passwordHash, 1, GMP_LSW_FIRST);
+
+                // Compute the password verifier
+                // - Compute g^h mod N (baseValue^hashedPassword mod modulus)
+                // - Export the result as a binary string
+                // - Pad the result to ensure it is 32 bytes long
+                $verifierBinary = gmp_powm($baseValue, $hashedPassword, $modulus);
+                $verifierBinaryString = gmp_export($verifierBinary, 1, GMP_LSW_FIRST);
+                $verifier = str_pad($verifierBinaryString, 32, chr(0), STR_PAD_RIGHT);
+
+                // Return the padded password verifier
+                return $verifier;
+            case 'srpV1':
+                // Initialize the base value (g) for the SRP public key calculation
+                $baseValue = gmp_init(2);
+
+                // Initialize the modulus (N) using a hexadecimal string
+                $modulus = gmp_init('86A7F6DEEB306CE519770FE37D556F29944132554DED0BD68205E27F3231FEF5A10108238A3150C59CAF7B0B6478691C13A6ACF5E1B5ADAFD4A943D4A21A142B800E8A55F8BFBAC700EB77A7235EE5A609E350EA9FC19F10D921C2FA832E4461B7125D38D254A0BE873DFC27858ACB3F8B9F258461E4373BC3A6C2A9634324AB', 16);
+
+                // Compute the intermediate hash value for the password key
+                // - Hash the username using SHA-256, concatenate with ':' and the first 16 bytes of the password
+                // - Hash the result again using SHA-256, concatenate with salt, and hash once more using SHA-256
+                $intermediateHash = hash('sha256', strtoupper($username) . ':' . substr($password, 0, 16), true);
+                $saltedHash = hash('sha256', $salt . $intermediateHash, true);
+                $hashedPasswordKey = gmp_import($saltedHash, 1, GMP_LSW_FIRST);
+
+                // Calculate the password verifier
+                // - Compute baseValue^hashedPasswordKey mod modulus
+                // - Export the result as a binary string
+                // - Pad the result to ensure it is 128 bytes long (little-endian)
+                $verifierBinary = gmp_powm($baseValue, $hashedPasswordKey, $modulus);
+                $verifierBinaryString = gmp_export($verifierBinary, 1, GMP_LSW_FIRST);
+                $verifier = str_pad($verifierBinaryString, 128, chr(0), STR_PAD_RIGHT);
+
+                return $verifier;
+            case 'srpV2':
+                // Constants used in the SRP algorithm
+                $generator = gmp_init(2); // Base value for SRP
+                $primeModulus = gmp_init('AC6BDB41324A9A9BF166DE5E1389582FAF72B6651987EE07FC3192943DB56050A37329CBB4A099ED8193E0757767A13DD52312AB4B03310DCD7F48A9DA04FD50E8083969EDB767B0CF6095179A163AB3661A05FBD5FAAAE82918A9962F0B93B855F97993EC975EEAA80D740ADBF4FF747359D041D5C33EA71D281E446B14773BCA97B43A23FB801676BD207A436C6481F1D2B9078717461A5B9D32E688F87748544523B524B0D57D5EA77A2775D2ECFA032CFBDBF52FB3786160279004E57AE6AF874E7303CE53299CCC041C7BC308D82A5698F3A8D0C38271AE35F8E9DBFBB694B5C803D89F7AE435DE236D525F54759B65E372FCD68EF20FA7111F9E4AFF73', 16);
+
+                // Create the string for hashing by combining username and password
+                $usernameHash = strtoupper(hash('sha256', strtoupper($username), true));
+                $combinedString = $usernameHash . ":" . $password;
+
+                // Parameters for PBKDF2 key derivation
+                $pbkdf2Iterations = 15000;
+                $derivedKey = hash_pbkdf2("sha512", $combinedString, $salt, $pbkdf2Iterations, 64, true);
+
+                // Convert the derived key to a GMP integer
+                $derivedKeyInteger = gmp_import($derivedKey, 1, GMP_MSW_FIRST);
+
+                // Check if the first byte of the derived key indicates a negative value
+                $firstByte = $derivedKey[0];
+                if (ord($firstByte) & 0x80) {
+                    $adjustmentFactor = gmp_init('100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', 16);
+                    $derivedKeyInteger = gmp_sub($derivedKeyInteger, $adjustmentFactor);
+                }
+
+                // Ensure the derived key is within the valid range
+                $modulusAdjusted = gmp_sub($primeModulus, gmp_init(1));
+                $derivedKeyInteger = gmp_mod($derivedKeyInteger, $modulusAdjusted);
+
+                // Compute the SRP verifier
+                $verifierRaw = gmp_powm($generator, $derivedKeyInteger, $primeModulus);
+                $verifierBinary = gmp_export($verifierRaw, 1, GMP_LSW_FIRST);
+
+                // Pad the verifier to a fixed length of 256 bytes, ensuring little-endian format
+                $verifier = str_pad($verifierBinary, 256, chr(0), STR_PAD_RIGHT);
+
+                return $verifier;
             default:
                 return strtoupper(sha1(strtoupper($username) . ':' . strtoupper($password)));
         }

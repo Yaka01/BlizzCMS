@@ -21,7 +21,8 @@
         "visualappeal/php-auto-update": "^1.0",
         "xemlock/htmlpurifier-html5": "^0.1",
         "mlocati/ip-lib": "^1.18",
-        "laizerox/php-wowemu-auth": "dev-master"
+        "laizerox/php-wowemu-auth": "dev-master",
+        "symfony/yaml": "^6.4"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

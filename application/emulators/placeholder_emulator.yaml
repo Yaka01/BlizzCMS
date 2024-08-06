@@ -1,0 +1,40 @@
+# Configuration Emulator
+config:
+    # Specifies the type of hashing algorithm used for generating password hashes.
+    # The choice of hashing type depends on the specific emulator and version being used:
+    # - 'bnet': Uses SHA-256 hashing with additional string reversal steps (very old TrinityCore versions).
+    # - 'hex': Applies a hexadecimal-based hashing algorithm (used in cmangos).
+    # - 'srp6': Utilizes the SRP-6a hashing algorithm with modular arithmetic (used in AzerothCore and older TrinityCore versions).
+    # - 'srpV1': Implements the SRP-V1 hashing algorithm, combining hashing and modular arithmetic (used in newer TrinityCore versions).
+    # - 'srpV2': Applies the SRP-V2 hashing algorithm, which includes more advanced hashing and modular arithmetic (used in the latest TrinityCore versions).
+    # - null or any other unspecified value: Defaults to using SHA-1 for hashing, which may be less secure.
+    # 
+    # Select the hashing type according to your application's security requirements and compatibility needs.
+    type: "bnet"
+
+columns:
+    account:
+        # Column mappings for the 'account' table in the database
+        id: "id"                   # Unique identifier for the account
+        username: "username"       # Username associated with the account
+        salt: "salt"               # Salt used for password hashing
+        verifier: "verifier"       # Password verifier for authentication
+        email: "email"             # Email address linked to the account
+        joindate: "joindate"       # Date when the account was created
+        last_ip: "last_ip"         # Last IP address used to access the account
+        last_login: "last_login"   # Date and time of the last login
+        expansion: "expansion"     # Game expansion associated with the account
+
+    battlenet_accounts:
+        # Column mappings for the 'battlenet_accounts' table in the database
+        id: "id"                   # Unique identifier for the Battle.net account
+        email: "email"             # Email address associated with the Battle.net account
+        srp: "srp_version"         # SRP version used for hashing (if applicable)
+        salt: "salt"               # Salt used for password hashing
+        verifier: "verifier"       # Password verifier for authentication
+
+# SQL queries defined for the emulator
+queries:
+  # Example SQL queries (replace with actual queries as needed)
+  # select_user_by_id: "SELECT * FROM account WHERE id = ?"
+  # update_user_email: "UPDATE account SET email = ? WHERE id = ?"

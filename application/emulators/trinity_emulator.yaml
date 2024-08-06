@@ -1,0 +1,42 @@
+# Emulator Configuration
+config:
+  # Specifies the type of hashing algorithm to use for generating password hashes.
+  # Available options include:
+  # - 'bnet': Uses SHA-256 with additional steps such as string reversal (old TrinityCore versions).
+  # - 'hex': Applies a hexadecimal-based algorithm for hashing (used in cmangos).
+  # - 'srp6': Utilizes the SRP-6a algorithm with modular arithmetic (AzerothCore and old TrinityCore versions).
+  # - 'srpV1': Implements the SRP-V1 algorithm, combining hashing and modular arithmetic (new TrinityCore versions).
+  # - 'srpV2': Applies the SRP-V2 algorithm, with more advanced hashing and modular arithmetic steps (latest TrinityCore versions).
+  # - null or any other unspecified value: Defaults to using SHA-1 for hashing, which may be less secure.
+  #
+  # Choose the hashing type based on the security requirements and compatibility needs of your application.
+  type: "srp6v1"
+
+# Column configuration for different tables
+columns:
+  account:
+    # Mapping of columns for the 'account' table in the database
+    id: "id"                   # Unique identifier for the account
+    username: "username"       # Username associated with the account
+    salt: "salt"               # Salt used for password hashing
+    verifier: "verifier"       # Password verifier for authentication
+    email: "email"             # Email address associated with the account
+    joindate: "joindate"       # Date the account was created
+    last_ip: "last_ip"         # Last IP address used to access the account
+    last_login: "last_login"   # Date and time of the last login
+    expansion: "expansion"     # Game expansion associated with the account
+
+  battlenet_accounts:
+    # Mapping of columns for the 'battlenet_accounts' table in the database
+    id: "id"                   # Unique identifier for the Battle.net account
+    email: "email"             # Email address associated with the Battle.net account
+    srp: "srp_version"         # SRP version used for hashing (if applicable)
+    salt: "salt"               # Salt used for password hashing
+    verifier: "verifier"       # Password verifier for authentication
+
+# SQL queries defined for the emulator
+queries:
+  # Example SQL queries (replace with actual queries as needed)
+  # select_user_by_id: "SELECT * FROM account WHERE id = ?"
+  # update_user_email: "UPDATE account SET email = ? WHERE id = ?"
+

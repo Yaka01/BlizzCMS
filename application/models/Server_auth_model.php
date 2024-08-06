@@ -43,13 +43,11 @@ class Server_auth_model extends CI_Model
 
         // Obtener la configuración de columnas para la tabla de cuentas
         $columns = $this->bs_emulator->get_columns('account');
-
-        // Obtener la función de hash desde el emulador
-        $hash_function = $this->bs_emulator->get_function('password_hash');
+        $type = $this->bs_emulator->get_config('type');
 
         // Generar el hash de la contraseña
         $salt = random_bytes(32);
-        $hashed_password = $hash_function($username, $password, $salt);
+        $hashed_password = client_pwd_hash($username, $password, $type, $salt);
 
         // Inicializar los datos de la cuenta
         $account = [
