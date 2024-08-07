@@ -74,8 +74,8 @@ class BS_Emulator {
      * @throws Exception If the query is not defined in the emulator configuration.
      */
     public function get_config($config) {
-        if (isset($this->emulator_config['config'][$query_name])) {
-            return $this->emulator_config['config'][$query_name];
+        if (isset($this->emulator_config['config'][$config])) {
+            return $this->emulator_config['config'][$config];
         }
         throw new Exception("Config not defined for emulator: " . $this->emulator);
     }
