@@ -16,23 +16,25 @@ config:
 columns:
   account:
     # Mapping of columns for the 'account' table in the database
-    id: "id"                   # Unique identifier for the account
-    username: "username"       # Username associated with the account
-    salt: "salt"               # Salt used for password hashing
-    verifier: "verifier"       # Password verifier for authentication
-    email: "email"             # Email address associated with the account
-    joindate: "joindate"       # Date the account was created
-    last_ip: "last_ip"         # Last IP address used to access the account
-    last_login: "last_login"   # Date and time of the last login
-    expansion: "expansion"     # Game expansion associated with the account
+    table: "account"              # Actual table name for 'account'
+    id: "id"                      # Unique identifier for the account
+    username: "username"          # Username associated with the account
+    salt: "salt"                  # Salt used for password hashing
+    verifier: "verifier"          # Password verifier for authentication
+    email: "email"                # Email address associated with the account
+    joindate: "joindate"          # Date the account was created
+    last_ip: "last_ip"            # Last IP address used to access the account
+    last_login: "last_login"      # Date and time of the last login
+    expansion: "expansion"        # Game expansion associated with the account
 
   battlenet_accounts:
     # Mapping of columns for the 'battlenet_accounts' table in the database
-    id: "id"                   # Unique identifier for the Battle.net account
-    email: "email"             # Email address associated with the Battle.net account
-    srp: "srp_version"         # SRP version used for hashing (if applicable)
-    salt: "salt"               # Salt used for password hashing
-    verifier: "verifier"       # Password verifier for authentication
+    table: "battlenet_accounts"   # Actual table name for 'battlenet_accounts'
+    id: "id"                      # Unique identifier for the Battle.net account
+    email: "email"                # Email address associated with the Battle.net account
+    srp: "srp_version"            # SRP version used for hashing (if applicable)
+    salt: "salt"                  # Salt used for password hashing
+    verifier: "verifier"          # Password verifier for authentication
 
 # SQL queries defined for the emulator
 queries:

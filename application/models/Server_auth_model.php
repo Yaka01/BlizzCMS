@@ -62,7 +62,7 @@ class Server_auth_model extends CI_Model
         ];
 
         // Utilizar Query Builder para insertar los datos de la cuenta
-        $database->insert('account', $account);
+        $database->insert($columns['table'], $account);
 
         // Obtener el ID de la cuenta recién creada
         $id = $database->insert_id();
@@ -76,12 +76,12 @@ class Server_auth_model extends CI_Model
             $bnet_account = [
                 $bnet_columns['id']            => $id,
                 $bnet_columns['email']         => $email,            
-                $bnet_columns['salt']      => $salt,
-                $bnet_columns['verifier']  => $hashed_password,
+                $bnet_columns['salt']          => $salt,
+                $bnet_columns['verifier']      => $hashed_password,
             ];
             
             // Utilizar Query Builder para insertar los datos de la cuenta BNET
-            $database->insert('battlenet_accounts', $bnet_account);
+            $database->insert($bnet_columns['table'], $bnet_account);
 
             // Actualizar la cuenta principal con el ID de BNET
             $update_columns = [
@@ -90,7 +90,7 @@ class Server_auth_model extends CI_Model
             ];
             
             // Utilizar Query Builder para actualizar los datos de la cuenta
-            $database->update('account', $update_columns, [$columns['id'] => $id]);
+            $database->update($columns['table'], $update_columns, [$columns['id'] => $id]);
         }
 
         return $id;
