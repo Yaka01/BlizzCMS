@@ -69,6 +69,10 @@ $config['expansions'] = [
     9 => [
         'name'      => 'Dragonflight',
         'max_money' => 99_999_999_999
+    ],
+    10 => [
+        'name'      => 'The War Within',
+        'max_money' => 99_999_999_999
     ]
 ];
 

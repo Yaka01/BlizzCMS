@@ -1,22 +1,18 @@
-# Emulator Configuration
 config:
   # Specifies the type of hashing algorithm to use for generating password hashes.
   # Available options include:
-  # - 'bnet': Uses SHA-256 with additional steps such as string reversal (old TrinityCore versions).
-  # - 'hex': Applies a hexadecimal-based algorithm for hashing (used in cmangos).
-  # - 'srp6': Utilizes the SRP-6a algorithm with modular arithmetic (AzerothCore and old TrinityCore versions).
-  # - 'srpV1': Implements the SRP-V1 algorithm, combining hashing and modular arithmetic (new TrinityCore versions).
-  # - 'srpV2': Applies the SRP-V2 algorithm, with more advanced hashing and modular arithmetic steps (latest TrinityCore versions).
-  # - null or any other unspecified value: Defaults to using SHA-1 for hashing, which may be less secure.
+  # - 'srp6': Utilizes the SRP-6a algorithm with modular arithmetic (default in AzerothCore).
+  # - 'bnet': Uses SHA-256 with additional steps such as string reversal (not typically used in AzerothCore).
+  # - null or any other unspecified value: Defaults to using SHA-1 for hashing, which is less secure.
   #
-  # Choose the hashing type based on the security requirements and compatibility needs of your application.
-  type: "srp6v1"
-  expansion: 9
+  # For AzerothCore, 'srp6' is typically recommended.
+  type: "srp6"
+  expansion: 2
 
 # Column configuration for different tables
 columns:
   account:
-    # Mapping of columns for the 'account' table in the database
+    # Mapping of columns for the 'account' table in the AzerothCore database
     table: "account"              # Actual table name for 'account'
     id: "id"                      # Unique identifier for the account
     username: "username"          # Username associated with the account
@@ -27,22 +23,16 @@ columns:
     last_ip: "last_ip"            # Last IP address used to access the account
     last_login: "last_login"      # Date and time of the last login
     expansion: "expansion"        # Game expansion associated with the account
-
-  battlenet_accounts:
-    # Mapping of columns for the 'battlenet_accounts' table in the database
-    table: "battlenet_accounts"   # Actual table name for 'battlenet_accounts'
-    id: "id"                      # Unique identifier for the Battle.net account
-    email: "email"                # Email address associated with the Battle.net account
-    srp: "srp_version"            # SRP version used for hashing (if applicable)
-    salt: "salt"                  # Salt used for password hashing
-    verifier: "verifier"          # Password verifier for authentication
+    mutetime: "mutetime"          # Account mute time
+    locale: "locale"              # Client locale (language)
+    os: "os"                      # Operating system of the last login
 
   arena_team:
-    # Mapping of columns for the 'arena_team' table in the database
+    # Mapping of columns for the 'arena_team' table in the AzerothCore database
     table: "arena_team"           # Actual table name for 'arena_team'
     id: "arenaTeamId"             # Unique identifier for the arena team
     name: "name"                  # Name of the arena team
-    captain_id: "captainGuid"      # Identifier of the team captain (character ID)
+    captain_id: "captainGuid"     # Identifier of the team captain (character ID)
     type: "type"                  # Type of arena (2v2, 3v3, 5v5)
     rating: "rating"              # Current rating of the arena team
     season_games: "seasonGames"   # Number of games played in the current season
@@ -52,7 +42,7 @@ columns:
     rank: "rank"                  # Current rank of the arena team
 
   arena_team_member:
-    # Mapping of columns for the 'arena_team_member' table in the database
+    # Mapping of columns for the 'arena_team_member' table in the AzerothCore database
     table: "arena_team_member"    # Actual table name for 'arena_team_member'
     arena_team_id: "arenaTeamId"  # Arena team ID associated with the member
     member_id: "guid"             # Unique identifier of the team member (character ID)
@@ -63,7 +53,7 @@ columns:
     personal_rating: "personalRating" # Personal rating of the member
 
   characters:
-    # Mapping of columns for the 'characters' table in the database
+    # Mapping of columns for the 'characters' table in the AzerothCore database
     table: "characters"           # Actual table name for 'characters'
     id: "guid"                    # Unique identifier for the character
     account_id: "account"         # Account ID associated with the character
@@ -76,9 +66,13 @@ columns:
     total_played: "totalTime"     # Total time played on this character
     xp: "xp"                      # Current experience points of the character
     homebind: "homebindMap"       # Homebind map ID (hearthstone location)
+    homebind_zone: "homebindZone" # Homebind zone ID
+    homebind_x: "homebindX"       # Homebind X coordinate
+    homebind_y: "homebindY"       # Homebind Y coordinate
+    homebind_z: "homebindZ"       # Homebind Z coordinate
+
 # SQL queries defined for the emulator
 queries:
   # Example SQL queries (replace with actual queries as needed)
   # select_user_by_id: "SELECT * FROM account WHERE id = ?"
   # update_user_email: "UPDATE account SET email = ? WHERE id = ?"
-
