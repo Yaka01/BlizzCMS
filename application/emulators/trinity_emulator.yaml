@@ -1,4 +1,14 @@
-# Emulator Configuration
+# ============================================
+# Trinity Emulator Configuration
+# ============================================
+# Source: WoW-CMS (https://github.com/WoW-CMS)
+# Last Updated: 12/08/2024
+# Author: WoW-CMS Team
+# Description: This configuration file is tailored for Trinity,
+#              a World of Warcraft emulator. It specifies the
+#              hashing algorithm used for passwords, column mappings
+#              for different database tables, and example SQL queries.
+# ============================================
 config:
   # Specifies the type of hashing algorithm to use for generating password hashes.
   # Available options include:

@@ -1,29 +1,32 @@
 # ============================================
-# Azeroth Emulator Configuration
+# cMangos Emulator Configuration
 # ============================================
 # Source: WoW-CMS (https://github.com/WoW-CMS)
 # Last Updated: 12/08/2024
 # Author: WoW-CMS Team
-# Description: This configuration file is tailored for azeroth,
+# Description: This configuration file is tailored for cMangos,
 #              a World of Warcraft emulator. It specifies the
 #              hashing algorithm used for passwords, column mappings
 #              for different database tables, and example SQL queries.
 # ============================================
+
+# Emulator Configuration
 config:
   # Specifies the type of hashing algorithm to use for generating password hashes.
   # Available options include:
-  # - 'srp6': Utilizes the SRP-6a algorithm with modular arithmetic (default in AzerothCore).
-  # - 'bnet': Uses SHA-256 with additional steps such as string reversal (not typically used in AzerothCore).
+  # - 'hex': Applies a hexadecimal-based algorithm for hashing (used in cMangos).
+  # - 'srp6': Utilizes the SRP-6a algorithm with modular arithmetic (not typically used in cMangos).
+  # - 'bnet': Uses SHA-256 with additional steps such as string reversal (used in some older emulators).
   # - null or any other unspecified value: Defaults to using SHA-1 for hashing, which is less secure.
   #
-  # For AzerothCore, 'srp6' is typically recommended.
-  type: "srp6"
-  expansion: 2
+  # For cMangos, 'hex' is typically used.
+  type: "hex"
+  expansion: 1
 
 # Column configuration for different tables
 columns:
   account:
-    # Mapping of columns for the 'account' table in the AzerothCore database
+    # Mapping of columns for the 'account' table in the cMangos database
     table: "account"              # Actual table name for 'account'
     id: "id"                      # Unique identifier for the account
     username: "username"          # Username associated with the account
@@ -39,7 +42,7 @@ columns:
     os: "os"                      # Operating system of the last login
 
   arena_team:
-    # Mapping of columns for the 'arena_team' table in the AzerothCore database
+    # Mapping of columns for the 'arena_team' table in the cMangos database
     table: "arena_team"           # Actual table name for 'arena_team'
     id: "arenaTeamId"             # Unique identifier for the arena team
     name: "name"                  # Name of the arena team
@@ -53,7 +56,7 @@ columns:
     rank: "rank"                  # Current rank of the arena team
 
   arena_team_member:
-    # Mapping of columns for the 'arena_team_member' table in the AzerothCore database
+    # Mapping of columns for the 'arena_team_member' table in the cMangos database
     table: "arena_team_member"    # Actual table name for 'arena_team_member'
     arena_team_id: "arenaTeamId"  # Arena team ID associated with the member
     member_id: "guid"             # Unique identifier of the team member (character ID)
@@ -64,7 +67,7 @@ columns:
     personal_rating: "personalRating" # Personal rating of the member
 
   characters:
-    # Mapping of columns for the 'characters' table in the AzerothCore database
+    # Mapping of columns for the 'characters' table in the cMangos database
     table: "characters"           # Actual table name for 'characters'
     id: "guid"                    # Unique identifier for the character
     account_id: "account"         # Account ID associated with the character
@@ -87,3 +90,5 @@ queries:
   # Example SQL queries (replace with actual queries as needed)
   # select_user_by_id: "SELECT * FROM account WHERE id = ?"
   # update_user_email: "UPDATE account SET email = ? WHERE id = ?"
+  # insert_character: "INSERT INTO characters (guid, account, name, race, class, level, money, online, totalTime, xp, homebindMap, homebindZone, homebindX, homebindY, homebindZ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+  # update_character_level: "UPDATE characters SET level = ? WHERE guid = ?"
