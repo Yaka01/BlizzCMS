@@ -9,40 +9,60 @@ class BS_Emulator {
     private $emulator;  // Emulator name
     private $emulator_config;  // Emulator configuration loaded from YAML
 
+    const EMULATOR_CONFIG_PATH = APPPATH . 'emulators/'; // Base path for emulator configurations
+
     /**
      * Constructor to initialize the emulator configuration.
+     * @throws Exception If emulator is not set.
      */
     public function __construct() {
         $this->CI =& get_instance();  // Get the CodeIgniter instance
         $this->emulator = $this->CI->setting_model->get_value('app_emulator') ?? null;  // Fetch emulator setting
-        $this->load_emulator_config($this->emulator);  // Load the emulator-specific configuration
+        
+        if ($this->emulator === null) {
+            throw new Exception("No emulator set in configuration.");
+        }
+
+        $this->initialize_emulator($this->emulator);
     }
 
     /**
-     * Load the emulator-specific configuration.
+     * Initialize the emulator by loading the corresponding configuration.
      * 
      * @param string $emulator The name of the emulator to load.
      * @throws Exception If the configuration file is not found or the emulator name is invalid.
      */
-    public function load_emulator_config($emulator) {
-        // Validate the emulator name to prevent directory traversal or other attacks
-        if (preg_match('/^[a-zA-Z0-9_]+$/', $emulator)) {
-            $config_path = APPPATH . 'emulators/' . $emulator . '_emulator.yaml';  // Path to the emulator config file
-            if (file_exists($config_path)) {
-                $this->emulator_config = $this->parse_yaml($config_path);  // Parse YAML file
-            } else {
-                throw new Exception("Config file not found: " . $config_path);  // Handle missing config file
-            }
+    public function initialize_emulator($emulator) {
+        // Validate emulator name
+        if (!$this->is_valid_emulator_name($emulator)) {
+            throw new Exception("Invalid emulator name: " . $emulator);
+        }
+
+        // Load emulator configuration
+        $config_path = self::EMULATOR_CONFIG_PATH . $emulator . '_emulator.yaml';
+        if (file_exists($config_path)) {
+            $this->emulator_config = $this->parse_yaml($config_path);
         } else {
-            throw new Exception("Invalid emulator name: " . $emulator);  // Handle invalid emulator name
+            throw new Exception("Config file not found: " . $config_path);
         }
     }
-    
+
+    /**
+     * Validate the emulator name.
+     * 
+     * @param string $emulator The emulator name to validate.
+     * @return bool True if valid, false otherwise.
+     */
+    private function is_valid_emulator_name($emulator) {
+        return preg_match('/^[a-zA-Z0-9_]+$/', $emulator);
+    }
+
     /**
      * Parse a YAML file into an associative array.
      * 
      * @param string $file_path Path to the YAML file.
      * @return array Parsed configuration data.
+     * @throws Exception If there is an error parsing the YAML file.
      */
     private function parse_yaml($file_path) {
         try {
@@ -53,6 +73,21 @@ class BS_Emulator {
     }
 
     /**
+     * Retrieve a value from the emulator configuration.
+     * 
+     * @param string $key The key in the configuration to retrieve.
+     * @param string $subsection The subsection in the configuration to retrieve (e.g., 'queries', 'config').
+     * @return mixed The configuration value.
+     * @throws Exception If the key is not defined in the emulator configuration.
+     */
+    private function get_emulator_value($key, $subsection) {
+        if (isset($this->emulator_config[$subsection][$key])) {
+            return $this->emulator_config[$subsection][$key];
+        }
+        throw new Exception(ucfirst($subsection) . " not defined for emulator: " . $this->emulator);
+    }
+
+    /**
      * Get a SQL query from the emulator configuration.
      * 
      * @param string $query_name The name of the query to retrieve.
@@ -60,24 +95,18 @@ class BS_Emulator {
      * @throws Exception If the query is not defined in the emulator configuration.
      */
     public function get_query($query_name) {
-        if (isset($this->emulator_config['queries'][$query_name])) {
-            return $this->emulator_config['queries'][$query_name];
-        }
-        throw new Exception("Query not defined for emulator: " . $this->emulator);
+        return $this->get_emulator_value($query_name, 'queries');
     }
 
     /**
-     * Get the emulator configuration.
+     * Get a specific configuration value from the emulator configuration.
      * 
-     * @param string $query_name The name of the query to retrieve.
-     * @return string The SQL query.
-     * @throws Exception If the query is not defined in the emulator configuration.
+     * @param string $config The name of the configuration to retrieve.
+     * @return mixed The configuration value.
+     * @throws Exception If the configuration is not defined in the emulator configuration.
      */
     public function get_config($config) {
-        if (isset($this->emulator_config['config'][$config])) {
-            return $this->emulator_config['config'][$config];
-        }
-        throw new Exception("Config not defined for emulator: " . $this->emulator);
+        return $this->get_emulator_value($config, 'config');
     }
 
     /**
@@ -85,12 +114,9 @@ class BS_Emulator {
      * 
      * @param string $table The name of the table.
      * @return array The columns configuration.
-     * @throws Exception If the table is not defined.
+     * @throws Exception If the table is not defined in the configuration.
      */
     public function get_columns($table) {
-        if (isset($this->emulator_config['columns'][$table])) {
-            return $this->emulator_config['columns'][$table];
-        }
-        throw new Exception("Columns configuration not defined for table: $table");
+        return $this->get_emulator_value($table, 'columns');
     }
 }
