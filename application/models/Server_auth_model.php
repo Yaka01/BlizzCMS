@@ -74,12 +74,11 @@ class Server_auth_model extends CI_Model
             $columns['username']  => $username,
             $columns['email']     => $email,
             $columns['expansion'] => config_item('app_expansion'),
-            $columns['joindate']  => date('Y-m-d H:i:s'), // Fecha actual
-            $columns['last_ip']   => '', // Asignar valores predeterminados si es necesario
-            $columns['last_login']=> date('Y-m-d H:i:s') // Fecha actual
+            $columns['joindate']  => date('Y-m-d H:i:s'),
+            $columns['last_ip']   => '',
+            $columns['last_login']=> date('Y-m-d H:i:s')
         ];
     
-        // Si el tipo de emulador requiere salt y verifier, generarlos
         if ($this->requires_hashing($type)) {
             $salt = random_bytes(32);
             $hashed_password = client_pwd_hash($username, $password, $type, $salt);
@@ -89,6 +88,48 @@ class Server_auth_model extends CI_Model
         }
     
         return $account;
+    }
+
+    /**
+     * Creates a new BNET account in the database with the provided data.
+     *
+     * @param object $database        Database instance.
+     * @param int    $id              Unique ID of the account.
+     * @param string $email           Email address of the BNET account.
+     * @param string $salt            Salt used for authentication.
+     * @param string $hashed_password Encrypted password of the account.
+     * @return void
+     */
+    private function create_bnet_account($database, int $id, string $email, string $salt, string $hashed_password): void
+    {
+        $bnet_columns = $this->bs_emulator->get_columns('battlenet_accounts');
+
+        $bnet_account = [
+            $bnet_columns['id']       => $id,
+            $bnet_columns['email']    => $email,
+            $bnet_columns['salt']     => $salt,
+            $bnet_columns['verifier'] => $hashed_password,
+        ];
+
+        $database->insert($bnet_columns['table'], $bnet_account);
+    }
+
+    /**
+     * Updates the main account in the database with the BNET account data.
+     *
+     * @param object $database Database instance.
+     * @param array  $columns  Array containing the main table's columns.
+     * @param int    $id       Unique ID of the main account.
+     * @return void
+     */
+    private function update_account_with_bnet($database, array $columns, int $id): void
+    {
+        $update_columns = [
+            'battlenet_account' => $id,
+            'battlenet_index'   => 1,
+        ];
+
+        $database->update($columns['table'], $update_columns, [$columns['id'] => $id]);
     }
 
     /**
