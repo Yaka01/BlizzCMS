@@ -145,18 +145,6 @@ class Server_auth_model extends CI_Model
     }
 
     /**
-     * 
-     * @param string $type
-     * @return bool
-     */
-    private function requires_hashing($type) 
-    {
-        $types_requiring_hashing = ['srp6', 'srp6v1', 'srp6v2'];
-
-        return in_array($type, $types_requiring_hashing);
-    }
-
-    /**
      * Verifica si se debe crear una cuenta BNET.
      *
      * @param object $database
