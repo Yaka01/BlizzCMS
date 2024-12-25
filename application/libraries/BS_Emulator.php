@@ -17,6 +17,9 @@ class BS_Emulator {
      */
     public function __construct() {
         $this->CI =& get_instance();  // Get the CodeIgniter instance
+        if ($this->CI->config->item('installation_active')) {
+            return;
+        }
         $this->emulator = $this->CI->setting_model->get_value('app_emulator') ?? null;  // Fetch emulator setting
         
         if ($this->emulator === null) {

@@ -54,7 +54,7 @@ class Server_auth_model extends CI_Model
             $this->create_bnet_account($database, $id, $email, $account['salt'], $account['verifier']);
             $this->update_account_with_bnet($database, $columns, $id);
         }
-
+      
         return $id;
     }
 
@@ -78,7 +78,7 @@ class Server_auth_model extends CI_Model
             $columns['last_ip']   => '',
             $columns['last_login']=> date('Y-m-d H:i:s')
         ];
-    
+
         if ($this->requires_hashing($type)) {
             $salt = random_bytes(32);
             $hashed_password = client_pwd_hash($username, $password, $type, $salt);
@@ -130,6 +130,18 @@ class Server_auth_model extends CI_Model
         ];
 
         $database->update($columns['table'], $update_columns, [$columns['id'] => $id]);
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @return bool
+     */
+    private function requires_hashing($type) 
+    {
+        $types_requiring_hashing = ['srp6', 'srp6v1', 'srp6v2'];
+
+        return in_array($type, $types_requiring_hashing);
     }
 
     /**
