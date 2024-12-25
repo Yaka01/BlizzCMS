@@ -13,6 +13,19 @@
     <script src="<?= $template['assets'].'js/tail.select.min.js' ?>"></script>
     <script src="<?= $template['assets'].'js/purecounter.min.js' ?>"></script>
     <script src="<?= $template['assets'].'fontawesome/js/all.min.js' ?>" defer></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+              navigator.serviceWorker.register('/service-worker')
+                  .then((registration) => {
+                      console.log('Service Worker registered with scope:', registration.scope);
+                  })
+                  .catch((error) => {
+                      console.log('Service Worker registration failed:', error);
+                  });
+          });
+      }
+    </script>
     <?= $template['head_tags'] ?>
   </head>
   <body>

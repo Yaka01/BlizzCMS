@@ -17,6 +17,9 @@ class BS_Emulator {
      */
     public function __construct() {
         $this->CI =& get_instance();  // Get the CodeIgniter instance
+        if ($this->CI->config->item('installation_active')) {
+            return;
+        }
         $this->emulator = $this->CI->setting_model->get_value('app_emulator') ?? null;  // Fetch emulator setting
         
         if ($this->emulator === null) {
@@ -38,13 +41,32 @@ class BS_Emulator {
             throw new Exception("Invalid emulator name: " . $emulator);
         }
 
-        // Load emulator configuration
-        $config_path = self::EMULATOR_CONFIG_PATH . $emulator . '_emulator.yml';
-        if (file_exists($config_path)) {
+        // Load emulator configuration from its corresponding folder
+        $config_path = $this->find_emulator_config($emulator);
+
+        if ($config_path !== null && file_exists($config_path)) {
             $this->emulator_config = $this->parse_yaml($config_path);
         } else {
-            throw new Exception("Config file not found: " . $config_path);
+            throw new Exception("Config file not found for emulator: " . $emulator);
         }
+    }
+
+    /**
+     * Find the emulator configuration file within the emulator directories.
+     * 
+     * @param string $emulator The emulator name.
+     * @return string|null The path to the YAML configuration file or null if not found.
+     */
+    private function find_emulator_config($emulator) {
+        $directories = glob(self::EMULATOR_CONFIG_PATH . '*', GLOB_ONLYDIR);
+
+        foreach ($directories as $dir) {
+            $config_path = $dir . '/' . $emulator . '.yml';
+            if (file_exists($config_path)) {
+                return $config_path;
+            }
+        }
+        return null;
     }
 
     /**
@@ -68,7 +90,7 @@ class BS_Emulator {
         try {
             return Yaml::parseFile($file_path);
         } catch (\Exception $e) {
-            throw new Exception("Error parsing YAML file: " . $e->getMessage());
+            throw new Exception("Error parsing YAML file: " . $file_path . ' - ' . $e->getMessage());
         }
     }
 

@@ -62,6 +62,7 @@ $route['reset-password'] = 'auth/reset_password';
 
 $route['lang/(:any)']['get'] = 'home/lang/$1';
 
+$route['service-worker']['get'] = 'home/serviceworker';
 /**
  * Install Routes
 */

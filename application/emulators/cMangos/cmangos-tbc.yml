@@ -1,0 +1,96 @@
+# ============================================
+# cMangos Emulator Configuration
+# ============================================
+# Source: WoW-CMS (https://github.com/WoW-CMS)
+# Last Updated: 12/08/2024
+# Author: WoW-CMS Team
+# Description: This configuration file is tailored for cMangos-TBC,
+#              a World of Warcraft emulator for The Burning Crusade expansion.
+#              It specifies the hashing algorithm used for passwords,
+#              column mappings for different database tables, and example SQL queries.
+# ============================================
+
+# Emulator Configuration
+config:
+  # Specifies the type of hashing algorithm to use for generating password hashes.
+  # Available options include:
+  # - 'hex': Applies a hexadecimal-based algorithm for hashing (used in cMangos).
+  # - 'srp6': Utilizes the SRP-6a algorithm with modular arithmetic (not typically used in cMangos).
+  # - 'bnet': Uses SHA-256 with additional steps such as string reversal (used in some older emulators).
+  # - null or any other unspecified value: Defaults to using SHA-1 for hashing, which is less secure.
+  #
+  # For cMangos-TBC, 'hex' is typically used.
+  type: "srp6"
+  expansion: 2  # The expansion is set to 2 for The Burning Crusade.
+
+# Column configuration for different tables
+columns:
+  account:
+    # Mapping of columns for the 'account' table in the cMangos-TBC database
+    table: "account"              # Actual table name for 'account'
+    id: "id"                      # Unique identifier for the account
+    username: "username"          # Username associated with the account
+    gmlevel: "gmlevel"            # GMLevel
+    salt: "s"                     # Salt used for password hashing
+    verifier: "v"                 # Password verifier for authentication
+    email: "email"                # Email address associated with the account
+    joindate: "joindate"          # Date the account was created
+    expansion: "expansion"        # Game expansion associated with the account
+
+  account_banned:
+    table: "account_banned"
+    id: "account_id"
+    banreason: "reason"
+    active: "active"
+    bandate: "banned_at"
+    unbandate: "expires_at"
+    bannedby: "banned_by"
+
+  arena_team:
+    # Mapping of columns for the 'arena_team' table in the cMangos-TBC database
+    table: "arena_team"           # Actual table name for 'arena_team'
+    id: "arenaTeamId"             # Unique identifier for the arena team
+    name: "name"                  # Name of the arena team
+    captain_id: "captainGuid"     # Identifier of the team captain (character ID)
+    type: "type"                  # Type of arena (2v2, 3v3, 5v5)
+    rating: "rating"              # Current rating of the arena team
+    season_games: "seasonGames"   # Number of games played in the current season
+    season_wins: "seasonWins"     # Number of wins in the current season
+    week_games: "weekGames"       # Number of games played in the current week
+    week_wins: "weekWins"         # Number of wins in the current week
+    rank: "rank"                  # Current rank of the arena team
+
+  arena_team_member:
+    # Mapping of columns for the 'arena_team_member' table in the cMangos-TBC database
+    table: "arena_team_member"    # Actual table name for 'arena_team_member'
+    arena_team_id: "arenaTeamId"  # Arena team ID associated with the member
+    member_id: "guid"             # Unique identifier of the team member (character ID)
+    played_week: "played_week"    # Games played by the member this week
+    won_week: "won_week"          # Games won by the member this week
+    played_season: "played_season" # Games played by the member this season
+    won_season: "won_season"      # Games won by the member this season
+    personal_rating: "personalRating" # Personal rating of the member
+
+  characters:
+    # Mapping of columns for the 'characters' table in the cMangos-TBC database
+    table: "characters"           # Actual table name for 'characters'
+    id: "guid"                    # Unique identifier for the character
+    account_id: "account"         # Account ID associated with the character
+    name: "name"                  # Name of the character
+    race: "race"                  # Race of the character
+    gender: "gender"              # Gender of the character
+    class: "class"                # Class of the character
+    zone: "zone"                  # Zone of the character
+    level: "level"                # Level of the character
+    money: "money"                # Amount of money the character possesses
+    online: "online"              # Status of the character (online/offline)
+    total_played: "totalTime"     # Total time played on this character
+    xp: "xp"                      # Current experience points of the character
+
+# SQL queries defined for the emulator
+queries:
+  # Example SQL queries (replace with actual queries as needed)
+  # select_user_by_id: "SELECT * FROM account WHERE id = ?"
+  # update_user_email: "UPDATE account SET email = ? WHERE id = ?"
+  # insert_character: "INSERT INTO characters (guid, account, name, race, class, level, money, online, totalTime, xp, homebindMap, homebindZone, homebindX, homebindY, homebindZ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+  # update_character_level: "UPDATE characters SET level = ? WHERE guid = ?"

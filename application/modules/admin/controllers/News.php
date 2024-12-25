@@ -69,7 +69,7 @@ class News extends Admin_Controller
 
             $this->load->library('upload', [
                 'upload_path'   => FCPATH . 'uploads/' . $directory,
-                'allowed_types' => 'gif|jpg|jpeg|png',
+                'allowed_types' => 'jpg|jpeg|png|webp',
                 'encrypt_name'  => true
             ]);
 

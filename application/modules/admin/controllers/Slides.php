@@ -50,7 +50,7 @@ class Slides extends Admin_Controller
 
             $this->load->library('upload', [
                 'upload_path'   => FCPATH . 'uploads/' . $directory,
-                'allowed_types' => 'gif|jpg|jpeg|png|mpeg|mpg|mp4|webm|ogg',
+                'allowed_types' => 'gif|jpg|jpeg|png|mpeg|mpg|mp4|webm|ogg|webp',
                 'encrypt_name'  => true
             ]);
 

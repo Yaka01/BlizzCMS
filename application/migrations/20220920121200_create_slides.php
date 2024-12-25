@@ -37,8 +37,8 @@ class Migration_Create_slides extends CI_Migration
         $this->dbforge->create_table('slides', false, ['ENGINE' => 'InnoDB']);
 
         $this->slide_model->insert_batch([
-            ['title' => 'BlizzCMS', 'description' => 'Check our constant updates!', 'type' => 'image', 'path' => '2022/11/95897962ade4959153b9d29b2528947b.jpg', 'sort' => 1],
-            ['title' => 'Vote Now', 'description' => 'Each vote will be rewarded!', 'type' => 'image', 'path' => '2022/11/3e0af6fc9ce5a60ca50dba3869cbc716.jpg', 'sort' => 2]
+            ['title' => 'BlizzCMS', 'description' => 'Check our constant updates!', 'type' => 'image', 'path' => '2022/11/95897962ade4959153b9d29b2528947b.webp', 'sort' => 1],
+            ['title' => 'Vote Now', 'description' => 'Each vote will be rewarded!', 'type' => 'image', 'path' => '2022/11/3e0af6fc9ce5a60ca50dba3869cbc716.webp', 'sort' => 2]
         ]);
     }
 

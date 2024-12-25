@@ -45,4 +45,15 @@ class Home extends BS_Controller
 
         redirect($this->agent->referrer());
     }
+
+    public function serviceworker() {
+        $filePath = './assets/js/service-worker-v4.js'; // Adjust the path if necessary
+
+        if (file_exists($filePath)) {
+            header('Content-Type: application/javascript');
+            readfile($filePath);
+        } else {
+            show_404(); // File not found
+        }
+    }
 }

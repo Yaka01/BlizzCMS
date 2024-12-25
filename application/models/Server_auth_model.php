@@ -39,63 +39,82 @@ class Server_auth_model extends CI_Model
      */
     public function create_account($username, $email, $password)
     {
-        $database = $this->connect(); // Conectar a la base de datos
+        $database = $this->connect();
 
-        // Obtener la configuración de columnas para la tabla de cuentas
         $columns = $this->bs_emulator->get_columns('account');
-        $type = $this->bs_emulator->get_config('type');
+        $type    = $this->bs_emulator->get_config('type');
 
-        // Generar el hash de la contraseña
-        $salt = random_bytes(32);
-        $hashed_password = client_pwd_hash($username, $password, $type, $salt);
+        $account = $this->prepare_account_data($username, $email, $password, $columns, $type);
 
-        // Inicializar los datos de la cuenta
-        $account = [
-            $columns['username']  => $username,
-            $columns['email']     => $email,
-            $columns['expansion'] => config_item('app_expansion'),
-            $columns['salt']      => $salt, // Usar el valor de salt generado por la función de hash
-            $columns['verifier']  => $hashed_password, // Usar el hash generado por la función
-            $columns['joindate']  => date('Y-m-d H:i:s'), // Fecha actual
-            $columns['last_ip']   => '', // Asignar valores predeterminados si es necesario
-            $columns['last_login']=> date('Y-m-d H:i:s') // Fecha actual
-        ];
-
-        // Utilizar Query Builder para insertar los datos de la cuenta
         $database->insert($columns['table'], $account);
 
-        // Obtener el ID de la cuenta recién creada
         $id = $database->insert_id();
 
-        // Crear una cuenta BNET si está habilitado y la tabla existe
-        if (config_item('app_emulator_bnet') && $database->table_exists('battlenet_accounts')) {
-            // Obtener la configuración de columnas para la tabla BNET
-            $bnet_columns = $this->bs_emulator->get_columns('battlenet_accounts');
-            
-            // Preparar los datos de la cuenta BNET
-            $bnet_account = [
-                $bnet_columns['id']            => $id,
-                $bnet_columns['email']         => $email,            
-                $bnet_columns['salt']          => $salt,
-                $bnet_columns['verifier']      => $hashed_password,
-            ];
-            
-            // Utilizar Query Builder para insertar los datos de la cuenta BNET
-            $database->insert($bnet_columns['table'], $bnet_account);
-
-            // Actualizar la cuenta principal con el ID de BNET
-            $update_columns = [
-                'battlenet_account' => $id,
-                'battlenet_index'   => 1
-            ];
-            
-            // Utilizar Query Builder para actualizar los datos de la cuenta
-            $database->update($columns['table'], $update_columns, [$columns['id'] => $id]);
+        if ($this->should_create_bnet_account($database)) {
+            $this->create_bnet_account($database, $id, $email, $account['salt'], $account['verifier']);
+            $this->update_account_with_bnet($database, $columns, $id);
         }
 
         return $id;
     }
 
+    /**
+     * Prepara los datos de la cuenta, incluyendo hash y salt si es necesario.
+     *
+     * @param string $username
+     * @param string $email
+     * @param string $password
+     * @param array $columns
+     * @param string $type
+     * @return array
+     */
+    private function prepare_account_data($username, $email, $password,  $columns, $type)
+    {
+        $account = [
+            $columns['username']  => $username,
+            $columns['email']     => $email,
+            $columns['expansion'] => config_item('app_expansion'),
+            $columns['joindate']  => date('Y-m-d H:i:s'), // Fecha actual
+            $columns['last_ip']   => '', // Asignar valores predeterminados si es necesario
+            $columns['last_login']=> date('Y-m-d H:i:s') // Fecha actual
+        ];
+    
+        // Si el tipo de emulador requiere salt y verifier, generarlos
+        if ($this->requires_hashing($type)) {
+            $salt = random_bytes(32);
+            $hashed_password = client_pwd_hash($username, $password, $type, $salt);
+    
+            $account[$columns['salt']] = $salt;
+            $account[$columns['verifier']] = $hashed_password;
+        }
+    
+        return $account;
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @return bool
+     */
+    private function requires_hashing($type) 
+    {
+        $types_requiring_hashing = ['srp6', 'srp6v1', 'srp6v2'];
+
+        return in_array($type, $types_requiring_hashing);
+    }
+
+    /**
+     * Verifica si se debe crear una cuenta BNET.
+     *
+     * @param object $database
+     * @return bool
+     */
+    private function should_create_bnet_account($database)
+    {
+        return config_item('app_emulator_bnet') && $database->table_exists('battlenet_accounts');
+    }
+
+    
 
     /**
      * Get account
